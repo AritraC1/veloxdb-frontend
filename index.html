@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VeloxDB — High-Performance Key-Value Store</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">
+    <img src="assets/logo.png" alt="Logo" width="50" height="50" />
+    <span class="nav-logo-text">VeloxDB</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="https://github.com/AritraC1/veloxdb/blob/main/Readme.md" target="_blank">Docs</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="https://github.com/AritraC1/veloxdb" target="_blank">GitHub</a></li>
+    <li><a href="#quickstart" class="nav-cta">Get Started</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="https://github.com/AritraC1/veloxdb/blob/main/Readme.md" target="_blank">Docs</a>
+  <a href="#features" onclick="toggleMenu()">Features</a>
+  <a href="#benchmark" onclick="toggleMenu()">Benchmark</a>
+  <a href="https://github.com/AritraC1/veloxdb" target="_blank">GitHub</a>
+  <a href="#quickstart" onclick="toggleMenu()" style="color: var(--primary-light)">Get Started →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+
+  <h1>A <em>faster</em> way to<br>store key-value data</h1>
+
+  <p class="hero-sub">
+    Redis-compatible key-value store built from scratch in Go.
+    Sharded actor model. Lock-free execution. 161K SET/sec.
+  </p>
+
+  <div class="hero-actions">
+    <a href="#quickstart" class="btn-primary">
+      Get Started
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a href="https://github.com/AritraC1/veloxdb" target="_blank" class="btn-secondary">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+      View on GitHub
+    </a>
+  </div>
+
+  <div class="hero-terminal">
+    <div class="terminal-bar">
+      <span class="terminal-dot red"></span>
+      <span class="terminal-dot yellow"></span>
+      <span class="terminal-dot green"></span>
+      <span class="terminal-title">redis-cli -p 6379</span>
+    </div>
+    <div class="terminal-body">
+      <div><span class="t-comment"># works with any Redis client</span></div>
+      <div><span class="t-prompt">❯ </span><span class="t-cmd">SET</span> <span class="t-key">user:1</span> <span class="t-val">"john doe"</span></div>
+      <div><span class="t-ok">OK</span></div>
+      <div><span class="t-prompt">❯ </span><span class="t-cmd">EXPIRE</span> <span class="t-key">user:1</span> <span class="t-val">3600</span></div>
+      <div><span class="t-num">(integer) 1</span></div>
+      <div><span class="t-prompt">❯ </span><span class="t-cmd">TTL</span> <span class="t-key">user:1</span></div>
+      <div><span class="t-num">(integer) 3598</span></div>
+      <div><span class="t-prompt">❯ </span><span class="t-cmd">INFO</span></div>
+      <div><span class="t-info">commands_per_second:161030</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat-item reveal">
+      <div class="stat-num" data-target="161030" data-suffix="/s">0</div>
+      <div class="stat-label">SET operations</div>
+    </div>
+    <div class="stat-item reveal" style="transition-delay:0.1s">
+      <div class="stat-num" data-target="87" data-suffix="%">0</div>
+      <div class="stat-label">of Redis throughput</div>
+    </div>
+    <div class="stat-item reveal" style="transition-delay:0.2s">
+      <div class="stat-num" data-target="8" data-suffix=" shards">0</div>
+      <div class="stat-label">Default shards</div>
+    </div>
+    <div class="stat-item reveal" style="transition-delay:0.3s">
+      <div class="stat-num" data-target="0" data-suffix=" deps">0</div>
+      <div class="stat-label">External dependencies</div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-inner">
+    <div class="features-header reveal">
+      <div class="section-tag">Why VeloxDB</div>
+      <h2 class="section-title">Built for speed,<br>designed for clarity</h2>
+      <p class="section-desc">Every design decision in VeloxDB optimizes for throughput, predictability, and correctness.</p>
+    </div>
+
+    <div class="features-grid reveal">
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">Sharded Actor Model</div>
+        <div class="feature-desc">Keys distributed across N shards via FNV hash. Each shard runs a single-threaded event loop — parallel execution with zero locks.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔁</div>
+        <div class="feature-title">Redis Compatible</div>
+        <div class="feature-desc">Full RESP protocol support. Works with redis-cli and any standard Redis client out of the box — zero migration cost.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💾</div>
+        <div class="feature-title">AOF Persistence</div>
+        <div class="feature-desc">Every write command appended to disk in RESP format. On restart, the full pipeline replays the log — crash recovery with no extra code.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">Atomic Metrics</div>
+        <div class="feature-desc">Lock-free atomic counters track commands/sec, per-command counts, and uptime. Query live stats with the INFO command.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🚀</div>
+        <div class="feature-title">Pipeline Support</div>
+        <div class="feature-desc">Pipeline-aware buffered writer flushes once per batch, not per command. 7x throughput improvement under pipelined workloads.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚙️</div>
+        <div class="feature-title">Zero Config</div>
+        <div class="feature-desc">Sensible defaults for everything. Override via environment variables — port, shard count, buffer size, AOF path.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENCHMARK -->
+<section id="benchmark">
+  <div class="section-inner">
+    <div class="benchmark-layout">
+      <div class="reveal">
+        <div class="section-tag">Performance</div>
+        <h2 class="section-title">87% of Redis.<br>Pure Go.</h2>
+        <p class="section-desc">Benchmarked against Redis 8.0.3 on the same machine — 50 concurrent clients, 100K requests.</p>
+
+        <div class="bench-bar-wrap">
+          <div class="bench-bar-label">
+            <span>VeloxDB SET</span>
+            <span style="color:var(--primary)">161K/sec</span>
+          </div>
+          <div class="bench-bar-track">
+            <div class="bench-bar-fill" data-width="90.7"></div>
+          </div>
+
+          <div class="bench-bar-label">
+            <span>Redis 8.0.3 SET</span>
+            <span>177K/sec</span>
+          </div>
+          <div class="bench-bar-track">
+            <div class="bench-bar-fill redis" data-width="100"></div>
+          </div>
+
+          <div class="bench-bar-label">
+            <span>VeloxDB GET</span>
+            <span style="color:var(--primary)">151K/sec</span>
+          </div>
+          <div class="bench-bar-track">
+            <div class="bench-bar-fill" data-width="86.4"></div>
+          </div>
+
+          <div class="bench-bar-label">
+            <span>Redis 8.0.3 GET</span>
+            <span>175K/sec</span>
+          </div>
+          <div class="bench-bar-track">
+            <div class="bench-bar-fill redis" data-width="100"></div>
+          </div>
+        </div>
+
+        <p class="bench-note">
+          Pipelined (16 cmds): VeloxDB hits 952K SET/sec and 1.1M GET/sec — a 7x improvement over non-pipelined.
+        </p>
+      </div>
+
+      <div class="reveal" style="transition-delay:0.15s">
+        <div class="benchmark-table">
+          <div class="bench-header">
+            <span>Command</span>
+            <span>VeloxDB</span>
+            <span>Redis</span>
+            <span style="text-align:right">Ratio</span>
+          </div>
+          <div class="bench-section-label">Standard</div>
+          <div class="bench-row">
+            <span class="bench-cmd">SET</span>
+            <span class="bench-velox">161,030/s</span>
+            <span class="bench-redis">177,619/s</span>
+            <span class="bench-ratio">90.7%</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-cmd">GET</span>
+            <span class="bench-velox">151,285/s</span>
+            <span class="bench-redis">175,131/s</span>
+            <span class="bench-ratio">86.4%</span>
+          </div>
+          <div class="bench-section-label">Pipelined ×16</div>
+          <div class="bench-row">
+            <span class="bench-cmd">SET</span>
+            <span class="bench-velox">952,381/s</span>
+            <span class="bench-redis">1,538,461/s</span>
+            <span class="bench-ratio">61.9%</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-cmd">GET</span>
+            <span class="bench-velox">1,136,363/s</span>
+            <span class="bench-redis">1,923,076/s</span>
+            <span class="bench-ratio">59.1%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMMANDS -->
+<section id="commands">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-tag">Commands</div>
+      <h2 class="section-title">All supported commands</h2>
+      <p class="section-desc">VeloxDB supports core Redis commands — compatible with any Redis client.</p>
+    </div>
+
+    <div class="commands-layout reveal" style="transition-delay:0.1s">
+      <div class="cmd-list">
+        <span class="cmd-list-item active" onclick="showCmd('get', this)">GET</span>
+        <span class="cmd-list-item" onclick="showCmd('set', this)">SET</span>
+        <span class="cmd-list-item" onclick="showCmd('del', this)">DEL</span>
+        <span class="cmd-list-item" onclick="showCmd('expire', this)">EXPIRE</span>
+        <span class="cmd-list-item" onclick="showCmd('ttl', this)">TTL</span>
+        <span class="cmd-list-item" onclick="showCmd('info', this)">INFO</span>
+      </div>
+
+      <div class="cmd-panel">
+        <div class="cmd-detail active" id="cmd-get">
+          <div class="cmd-title">GET</div>
+          <div class="cmd-desc">Retrieve the value associated with a key. Returns nil if the key does not exist or has expired.</div>
+          <div class="cmd-syntax">
+            <div class="cmd-syntax-label">Syntax</div>
+            <span style="color:var(--primary-light)">GET</span> <span style="color:#7EC8A4">key</span>
+          </div>
+          <div class="cmd-example">
+            <div><span class="t-prompt">❯ </span><span class="t-cmd">GET</span> <span class="t-key">foo</span></div>
+            <div><span class="t-val">"bar"</span></div>
+            <div><span class="t-prompt">❯ </span><span class="t-cmd">GET</span> <span class="t-key">missing</span></div>
+            <div><span class="t-nil">(nil)</span></div>
+          </div>
+          <div class="cmd-returns">Returns: Bulk string reply, or nil when key does not exist</div>
+        </div>
+
+        <div class="cmd-detail" id="cmd-set">
+          <div class="cmd-title">SET</div>
+          <div class="cmd-desc">Set the value of a key. If the key already exists, its value is overwritten regardless of type.</div>
+          <div class="cmd-syntax">
+            <div class="cmd-syntax-label">Syntax</div>
+            <span style="color:var(--primary-light)">SET</span> <span style="color:#7EC8A4">key</span> <span style="color:#89B4E8">value</span>
+          </div>
+          <div class="cmd-example">
+            <div><span class="t-prompt">❯ </span><span class="t-cmd">SET</span> <span class="t-key">name</span> <span class="t-val">"aritra"</span></div>
+            <div><span class="t-ok">OK</span></div>
+            <div><span class="t-prompt">❯ </span><span class="t-cmd">GET</span> <span class="t-key">name</span></div>
+            <div><span class="t-val">"aritra"</span></div>
+          </div>
+          <div class="cmd-returns">Returns: Simple string reply OK</div>
+        </div>
+
+        <div class="cmd-detail" id="cmd-del">
+          <div class="cmd-title">DEL</div>
+          <div class="cmd-desc">Remove a key from the store. Returns 1 if the key existed and was deleted, 0 if it did not exist.</div>
+          <div class="cmd-syntax">
+            <div class="cmd-syntax-label">Syntax</div>
+            <span style="color:var(--primary-light)">DEL</span> <span style="color:#7EC8A4">key</span>
+          </div>
+          <div class="cmd-example">
+            <div><span class="t-prompt">❯ </span><span class="t-cmd">DEL</span> <span class="t-key">foo</span></div>
+            <div><span class="t-num">(integer) 1</span></div>
+            <div><span class="t-prompt">❯ </span><span class="t-cmd">DEL</span> <span class="t-key">missing</span></div>
+            <div><span class="t-num">(integer) 0</span></div>
+          </div>
+          <div class="cmd-returns">Returns: Integer reply — 1 if deleted, 0 if key not found</div>
+        </div>
+
+        <div class="cmd-detail" id="cmd-expire">
+          <div class="cmd-title">EXPIRE</div>
+          <div class="cmd-desc">Set a timeout on a key in seconds. After the timeout, the key is automatically deleted on next access.</div>
+          <div class="cmd-syntax">
+            <div class="cmd-syntax-label">Syntax</div>
+            <span style="color:var(--primary-light)">EXPIRE</span> <span style="color:#7EC8A4">key</span> <span style="color:#89B4E8">seconds</span>
+          </div>
+          <div class="cmd-example">
+            <div><span class="t-prompt">❯ </span><span class="t-cmd">SET</span> <span class="t-key">session</span> <span class="t-val">"abc123"</span></div>
+            <div><span class="t-ok">OK</span></div>
+            <div><span class="t-prompt">❯ </span><span class="t-cmd">EXPIRE</span> <span class="t-key">session</span> <span class="t-val">3600</span></div>
+            <div><span class="t-num">(integer) 1</span></div>
+          </div>
+          <div class="cmd-returns">Returns: 1 if timeout set, 0 if key does not exist</div>
+        </div>
+
+        <div class="cmd-detail" id="cmd-ttl">
+          <div class="cmd-title">TTL</div>
+          <div class="cmd-desc">Returns the remaining time to live of a key. Returns -1 if no expiry is set, -2 if the key does not exist.</div>
+          <div class="cmd-syntax">
+            <div class="cmd-syntax-label">Syntax</div>
+            <span style="color:var(--primary-light)">TTL</span> <span style="color:#7EC8A4">key</span>
+          </div>
+          <div class="cmd-example">
+            <div><span class="t-prompt">❯ </span><span class="t-cmd">TTL</span> <span class="t-key">session</span></div>
+            <div><span class="t-num">(integer) 3597</span></div>
+            <div><span class="t-prompt">❯ </span><span class="t-cmd">TTL</span> <span class="t-key">persistent</span></div>
+            <div><span class="t-num">(integer) -1</span></div>
+          </div>
+          <div class="cmd-returns">Returns: TTL in seconds, -1 (no expiry), or -2 (not found)</div>
+        </div>
+
+        <div class="cmd-detail" id="cmd-info">
+          <div class="cmd-title">INFO</div>
+          <div class="cmd-desc">Returns live server statistics — uptime, total commands processed, commands per second, and per-command breakdowns.</div>
+          <div class="cmd-syntax">
+            <div class="cmd-syntax-label">Syntax</div>
+            <span style="color:var(--primary-light)">INFO</span>
+          </div>
+          <div class="cmd-example">
+            <div><span class="t-prompt">❯ </span><span class="t-cmd">INFO</span></div>
+            <div><span class="t-info">uptime_in_seconds:3600</span></div>
+            <div><span class="t-info">total_commands:842910</span></div>
+            <div><span class="t-info">commands_per_second:161030.00</span></div>
+            <div><span class="t-info">get_commands:421455</span></div>
+            <div><span class="t-info">set_commands:421455</span></div>
+          </div>
+          <div class="cmd-returns">Returns: Bulk string with server stats</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUICKSTART -->
+<section id="quickstart">
+  <div class="section-inner">
+    <div class="reveal" style="text-align:center; margin-bottom: 1rem;">
+      <div class="section-tag" style="display:inline-block">Quick Start</div>
+      <h2 class="section-title">Up and running in<br>30 seconds</h2>
+      <p class="section-desc" style="margin: 0 auto;">No config files. No Docker required. Just Go.</p>
+    </div>
+
+    <div class="quickstart-steps">
+      <div class="qs-step reveal">
+        <div class="qs-num">01</div>
+        <div class="qs-title">Clone the repo</div>
+        <div class="qs-code" style="position:relative">
+          <button class="copy-btn" onclick="copyCode(this, 'git clone https://github.com/AritraC1/veloxdb.git\ncd veloxdb')">copy</button>
+          <div>git clone https://github.com/<br>AritraC1/veloxdb.git</div>
+          <div>cd veloxdb</div>
+        </div>
+      </div>
+
+      <div class="qs-step reveal" style="transition-delay:0.1s">
+        <div class="qs-num">02</div>
+        <div class="qs-title">Start the server</div>
+        <div class="qs-code" style="position:relative">
+          <button class="copy-btn" onclick="copyCode(this, 'go run cmd/server/main.go')">copy</button>
+          <div>go run cmd/server/main.go</div>
+          <div style="color:var(--primary);margin-top:0.5rem"># Server started on :6379</div>
+        </div>
+      </div>
+
+      <div class="qs-step reveal" style="transition-delay:0.2s">
+        <div class="qs-num">03</div>
+        <div class="qs-title">Connect & query</div>
+        <div class="qs-code" style="position:relative">
+          <button class="copy-btn" onclick="copyCode(this, 'redis-cli -p 6379')">copy</button>
+          <div>redis-cli -p 6379</div>
+          <div style="color:var(--text-dim);margin-top:0.5rem"># Any Redis client works</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal" style="text-align:center; margin-top:3rem; transition-delay:0.3s">
+      <p style="font-size:0.82rem; color:var(--text-dim); font-family:var(--mono); margin-bottom:1rem;">
+        Configure with env vars: PORT=6380 NUM_SHARDS=16 go run cmd/server/main.go
+      </p>
+      <a href="https://github.com/AritraC1/veloxdb" target="_blank" class="btn-primary">
+        View on GitHub
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo" style="margin-bottom:0.75rem; display:inline-flex">
+          <svg viewBox="0 0 100 100" fill="none" width="24" height="24">
+            <path d="M10 85 L50 15 L90 85" stroke="#D94F2B" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <path d="M65 50 L90 20 L90 85" stroke="#F26340" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.7"/>
+          </svg>
+          <span class="nav-logo-text">VeloxDB</span>
+        </a>
+        <p class="footer-tagline">High-performance Redis-compatible key-value store. Built from scratch in Go.</p>
+      </div>
+
+      <div class="footer-links">
+        <div class="footer-col">
+          <div class="footer-col-title">Project</div>
+          <a href="https://github.com/AritraC1/veloxdb" target="_blank">GitHub</a>
+          <a href="https://github.com/AritraC1/veloxdb/blob/main/README.md" target="_blank">Docs</a>
+          <a href="#benchmark">Benchmark</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Commands</div>
+          <a href="#commands" onclick="showCmd('get', document.querySelector('.cmd-list-item'))">GET / SET</a>
+          <a href="#commands">DEL / EXPIRE</a>
+          <a href="#commands">TTL / INFO</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Roadmap</div>
+          <a href="https://github.com/AritraC1/veloxdb" target="_blank">Consistent Hashing</a>
+          <a href="https://github.com/AritraC1/veloxdb" target="_blank">Replication</a>
+          <a href="https://github.com/AritraC1/veloxdb" target="_blank">Cluster Mode</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 VeloxDB · Apache 2.0 License</span>
+      <a href="https://github.com/AritraC1/veloxdb" target="_blank" class="footer-cta">
+        Star on GitHub ★
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
