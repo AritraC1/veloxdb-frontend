@@ -27,31 +27,6 @@
     observer.observe(el.closest('.reveal') || el);
   });
 
-  // ── COUNTER ANIMATION ──
-  function animateCounter(el) {
-    const target = parseInt(el.dataset.target);
-    const suffix = el.dataset.suffix || '';
-    const duration = 1400;
-    const start = performance.now();
-
-    function update(now) {
-      const elapsed = now - start;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      const current = Math.round(target * eased);
-
-      if (target > 1000) {
-        el.textContent = current.toLocaleString() + suffix;
-      } else {
-        el.textContent = current + suffix;
-      }
-
-      if (progress < 1) requestAnimationFrame(update);
-    }
-
-    requestAnimationFrame(update);
-  }
-
   // ── COMMANDS SWITCHER ──
   function showCmd(id, el) {
     document.querySelectorAll('.cmd-detail').forEach(d => d.classList.remove('active'));
